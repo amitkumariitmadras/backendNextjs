@@ -1,6 +1,9 @@
 import connect from "@/app/lib/db";
 import User from "@/app/lib/modals/user";
 import { NextResponse } from "next/server";
+import { Types } from "mongoose";
+
+const ObjectId = require("mongoose").Types.ObjectId;
 
 export const GET = async () => {
   try {
@@ -31,8 +34,47 @@ export const POST = async (request: Request) => {
   }
 };
 
-
 export const PATCH = async (request: Request) => {
-  const User = await request.json();
-  
-}   
+  try {
+    const body = await request.json();
+    const { userId, newUsername } = body;
+
+    await connect();
+
+    if (!userId || !newUsername) {
+      return new NextResponse(
+        JSON.stringify({ message: "userId or newUsername is not present" }),
+        { status: 400 }
+      );
+    }
+
+    if (!Types.ObjectId.isValid(userId)) {
+      return new NextResponse(
+        JSON.stringify({ message: "userId isn't valid" }),
+        { status: 400 }
+      );
+    }
+
+    const updateUser = await User.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { username: newUsername },
+      { new: true }
+    );
+    if (!updateUser) {
+      return new NextResponse(
+        JSON.stringify({ message: "User couldn't be updated" }),
+        { status: 400 }
+      );
+    }
+
+    return new NextResponse(
+      JSON.stringify({
+        message: "Username has been Updated",
+        user: updateUser,
+      }),
+      { status: 200 }
+    );
+  } catch (err: any) {
+    return new NextResponse("Error:" + err.message, { status: 500 });
+  }
+};
