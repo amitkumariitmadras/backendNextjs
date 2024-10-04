@@ -78,3 +78,45 @@ export const PATCH = async (request: Request) => {
     return new NextResponse("Error:" + err.message, { status: 500 });
   }
 };
+
+export const DELETE = async (request: Request) => {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ message: "userId isn't avaialable" }),
+        { status: 400 }
+      );
+    }
+
+    if (!Types.ObjectId.isValid(userId)) {
+      return new NextResponse(
+        JSON.stringify({ message: "userId isn't valid" }),
+        { status: 400 }
+      );
+    }
+    await connect();
+
+    const UpdatedUser = await User.findByIdAndDelete(
+      new Types.ObjectId(userId)
+    );
+
+    if (!UpdatedUser) {
+      return new NextResponse(
+        JSON.stringify({ message: "user isn't available in database" }),
+        { status: 400 }
+      );
+    }
+
+    return new NextResponse(
+      JSON.stringify({ message: "User has been deleted", user: UpdatedUser }),
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return new NextResponse(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
+  }
+};
