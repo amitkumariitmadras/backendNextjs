@@ -1,7 +1,7 @@
-import connect from "@/app/lib/db";
-import User from "@/app/lib/modals/user";
-import Category from "@/app/lib/modals/category";
-import Blog from "@/app/lib/modals/blog";
+import connect from "@/lib/db";
+import User from "@/lib/modals/user";
+import Category from "@/lib/modals/category";
+import Blog from "@/lib/modals/blog";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 const ObjectId = require("mongoose").Types.ObjectId;

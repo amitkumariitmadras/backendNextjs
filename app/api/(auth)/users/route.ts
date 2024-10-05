@@ -1,5 +1,5 @@
-import connect from "@/app/lib/db";
-import User from "@/app/lib/modals/user";
+import connect from "@/lib/db";
+import User from "@/lib/modals/user";
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 
